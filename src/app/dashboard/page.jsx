@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { LogOut, X, Star, StarOff, FileText, Zap, PenTool, Globe, BookOpen, BarChart2 } from "lucide-react";
 import { client } from "../../lib/sanity";
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/nextjs";
+import UpgradeNotice from "../components/UpgradeNotice";
 
 const iconMap = {
   FileText,
@@ -14,12 +15,29 @@ const iconMap = {
   BarChart2,
 };
 
+function daysSince(dateStr) {
+  const then = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - then.getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
 export default function Dashboard() {
+  const { user } = useUser();
   const [resources, setResources] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Alle");
   const [search, setSearch] = useState("");
   const [modalResource, setModalResource] = useState(null);
   const [favorites, setFavorites] = useState([]);
+
+  const signupDate = user?.publicMetadata?.signupDate;
+  const isTrialExpired = signupDate && daysSince(signupDate) > 7;
+
+  useEffect(() => {
+    if (user && !signupDate) {
+      fetch("/api/set-signup-date", { method: "POST" });
+    }
+  }, [user, signupDate]);
 
   useEffect(() => {
     client
@@ -65,6 +83,8 @@ export default function Dashboard() {
             <div className="flex justify-between items-center mb-10">
               <h1 className="text-4xl font-bold">Dine AI-ressourcer</h1>
             </div>
+
+            {isTrialExpired && <UpgradeNotice />}
 
             <div className="mb-4">
               <input
@@ -166,13 +186,17 @@ export default function Dashboard() {
                 </div>
                 <h2 className="text-xl font-bold mb-2 text-gray-800">{modalResource.title}</h2>
                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">{modalResource.description}</p>
-                <a
-                  href={modalResource.link}
-                  target="_blank"
-                  className="inline-block bg-gray-900 text-white px-5 py-2 rounded-xl font-medium hover:bg-gray-800 transition"
-                >
-                  Download PDF
-                </a>
+                {isTrialExpired ? (
+                  <p className="text-sm text-red-500">Din gratis prøveperiode er udløbet. <a href="/opgrader" className="underline">Opgrader for adgang</a>.</p>
+                ) : (
+                  <a
+                    href={modalResource.link}
+                    target="_blank"
+                    className="inline-block bg-gray-900 text-white px-5 py-2 rounded-xl font-medium hover:bg-gray-800 transition"
+                  >
+                    Download PDF
+                  </a>
+                )}
               </div>
             </div>
           )}

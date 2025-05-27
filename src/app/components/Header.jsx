@@ -13,10 +13,13 @@ export default function Header() {
           <a href="/dashboard" className="text-sm text-gray-700 hover:text-black">
             Dashboard
           </a>
+          <a href="/opgrader" className="text-sm text-red-600 hover:underline">
+            Opgrader
+          </a>
           <SignedOut>
             <SignInButton mode="modal" afterSignInUrl="/dashboard">
               <button className="text-sm text-gray-700 hover:text-black">
-                Log ind
+                Start gratis prøve
               </button>
             </SignInButton>
           </SignedOut>
