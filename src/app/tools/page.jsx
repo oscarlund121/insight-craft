@@ -9,33 +9,35 @@ const tools = [
     description:
       "Få genereret engagerende nyhedsbreve baseret på din målgruppe og tilbud.",
     href: "/tools/newsletter-generator",
-    icon: <Mail className="w-5 h-5 text-gray-600" />,
+    icon: <Mail className="w-5 h-5 text-purple-700" />,
+    bg: "bg-purple-50",
   },
   {
     title: "SEO-Optimering",
     description:
       "Forbedr dine sidetitler, metabeskrivelser og nøgleord med AI-hjælp.",
     href: "/tools/seo-optimizer",
-    icon: <Search className="w-5 h-5 text-gray-600" />,
+    icon: <Search className="w-5 h-5 text-emerald-700" />,
+    bg: "bg-emerald-50",
   },
   {
     title: "SoMe Indhold",
     description:
       "Lav forslag til posts til LinkedIn, Instagram og Facebook på få sekunder.",
     href: "/tools/social-media-helper",
-    icon: <Megaphone className="w-5 h-5 text-gray-600" />,
+    icon: <Megaphone className="w-5 h-5 text-yellow-600" />,
+    bg: "bg-yellow-50",
   },
 ];
 
 export default function ToolsPage() {
   return (
-    <main className="max-w-5xl mx-auto px-6 py-16">
-      <h1 className="text-4xl font-bold mb-4 text-gray-900 tracking-tight">
+    <main className="max-w-5xl mx-auto px-6 py-20">
+      <h1 className="text-4xl font-extrabold mb-4 text-gray-900 tracking-tight">
         AI-værktøjer
       </h1>
-      <p className="text-gray-600 mb-10 text-lg max-w-2xl">
-        Brug vores smarte værktøjer til at generere tekster, optimere din
-        kommunikation og spare tid i din markedsføring.
+      <p className="text-gray-700 mb-12 text-lg max-w-2xl">
+        Brug vores værktøjer til at skabe tekster, optimere SEO og styrke din kommunikation med AI.
       </p>
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -43,15 +45,17 @@ export default function ToolsPage() {
           <Link
             key={i}
             href={tool.href}
-            className="group p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:border-gray-300 transition-transform duration-200 hover:scale-[1.02]"
+            className={`${tool.bg} group p-6 rounded-2xl shadow-sm border border-transparent hover:shadow-md hover:border-gray-200 transition`}
           >
-            <div className="flex items-center gap-3 mb-2">
-              {tool.icon}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="bg-white p-2 rounded-full shadow">
+                {tool.icon}
+              </div>
               <h2 className="text-lg font-semibold text-gray-900 group-hover:underline">
                 {tool.title}
               </h2>
             </div>
-            <p className="text-sm text-gray-600 group-hover:text-gray-800">
+            <p className="text-sm text-gray-700 group-hover:text-gray-900">
               {tool.description}
             </p>
           </Link>

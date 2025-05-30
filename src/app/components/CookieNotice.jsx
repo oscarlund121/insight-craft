@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CookieNotice() {
   const [accepted, setAccepted] = useState(false);
@@ -15,12 +16,27 @@ export default function CookieNotice() {
     setAccepted(true);
   };
 
-  if (accepted) return null;
-
   return (
-    <div className="fixed bottom-4 inset-x-4 bg-gray-900 text-white text-sm p-4 rounded-xl shadow-lg flex flex-col sm:flex-row items-center justify-between z-50">
-      <p className="mb-2 sm:mb-0">Vi bruger cookies til at forbedre din oplevelse. Ved at fortsætte accepterer du vores brug af cookies.</p>
-      <button onClick={acceptCookies} className="bg-white text-gray-900 px-4 py-2 rounded font-semibold">Accepter</button>
-    </div>
+    <AnimatePresence>
+      {!accepted && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.4 }}
+          className="fixed bottom-6 inset-x-4 bg-gray-900 text-white text-sm md:text-base p-5 rounded-2xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 z-50"
+        >
+          <p className="text-center md:text-left leading-snug">
+            Vi bruger cookies til at forbedre din oplevelse. Ved at fortsætte accepterer du vores brug af cookies.
+          </p>
+          <button
+            onClick={acceptCookies}
+            className="bg-white text-gray-900 px-5 py-2 rounded-xl font-semibold hover:bg-gray-200 transition"
+          >
+            Accepter
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

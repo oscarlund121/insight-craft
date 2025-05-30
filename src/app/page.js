@@ -9,6 +9,7 @@ import NewsletterForm from "./components/NewsletterForm";
 import Footer from "./components/Footer";
 import CookieNotice from "./components/CookieNotice";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import HowItWorks from "./components/HowItWorks";
 
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
       <About />
       <Audience />
       <Examples />
+      <HowItWorks />
       <Pricing />
       <NewsletterForm />
       <Footer />

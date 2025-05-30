@@ -1,7 +1,11 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
-import { LogOut, X, Star, StarOff, FileText, Zap, PenTool, Globe, BookOpen, BarChart2 } from "lucide-react";
+import {
+  LogOut, X,
+  Bookmark, BookmarkCheck,
+  FileText, Zap, PenTool, Globe, BookOpen, BarChart2
+} from "lucide-react";
 import { client } from "../../lib/sanity";
 import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/nextjs";
 import UpgradeNotice from "../components/UpgradeNotice";
@@ -56,11 +60,7 @@ export default function Dashboard() {
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
-  const categories = [
-    "Alle",
-    "Favoritter",
-    ...new Set(resources.map((r) => r.category))
-  ];
+  const categories = ["Alle", "Favoritter", ...new Set(resources.map((r) => r.category))];
 
   const filteredResources = resources.filter((r) => {
     const isFavorite = favorites.includes(r.title);
@@ -86,25 +86,23 @@ export default function Dashboard() {
 
             {isTrialExpired && <UpgradeNotice />}
 
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Søg efter ressourcer..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded mb-6"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Søg efter ressourcer..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full md:w-1/2 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-600 mb-8"
+            />
 
             <div className="mb-8 flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 text-sm rounded-full border transition ${
+                  className={`px-4 py-2 text-sm rounded-full transition font-medium ${
                     selectedCategory === cat
-                      ? "bg-gray-900 text-white shadow"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                      ? "bg-purple-700 text-white shadow"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {cat}
@@ -115,26 +113,30 @@ export default function Dashboard() {
             {filteredResources.length === 0 ? (
               <p className="text-gray-500 text-center mt-20">
                 {selectedCategory === "Favoritter"
-                  ? "Du har ikke gemt nogen favoritter endnu. Klik på stjernen på et kort for at tilføje."
+                  ? "Du har ikke gemt nogen favoritter endnu. Klik på bogmærke-ikonet for at tilføje."
                   : "Ingen ressourcer fundet."}
               </p>
             ) : (
               <div className="grid gap-6 md:grid-cols-3">
                 {filteredResources.map((res, i) => {
                   const Icon = iconMap[res.icon] || FileText;
+                  const isEven = i % 2 === 0;
+                  const bgColor = isEven ? "bg-purple-50" : "bg-emerald-50";
+
                   return (
                     <div
                       key={i}
-                      className="relative p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition border border-gray-200 hover:border-gray-300"
+                      className={`relative p-6 rounded-2xl shadow-sm hover:shadow-md transition border border-gray-200 hover:border-gray-300 ${bgColor}`}
                     >
                       <button
                         onClick={() => toggleFavorite(res.title)}
-                        className="absolute top-3 right-3 text-yellow-500 hover:scale-110 transition"
+                        className="absolute top-3 right-3 text-purple-600 hover:scale-110 transition"
+                        aria-label="Gem som favorit"
                       >
                         {favorites.includes(res.title) ? (
-                          <Star className="w-5 h-5 fill-yellow-400" />
+                          <BookmarkCheck className="w-5 h-5 fill-purple-600" />
                         ) : (
-                          <StarOff className="w-5 h-5" />
+                          <Bookmark className="w-5 h-5" />
                         )}
                       </button>
                       <button
@@ -146,14 +148,14 @@ export default function Dashboard() {
                           <span className="text-sm text-gray-500">{res.category}</span>
                         </div>
                         <h2 className="font-semibold text-lg mb-1">{res.title}</h2>
-                        <p className="text-sm text-gray-600 leading-snug mb-2">{res.description}</p>
+                        <p className="text-sm text-gray-700 leading-snug mb-2">{res.description}</p>
                         <div className="flex items-center justify-between text-xs text-gray-400">
                           {res.tags?.length > 0 && (
                             <div className="flex gap-1 flex-wrap">
                               {res.tags.map((tag, idx) => (
                                 <span
                                   key={idx}
-                                  className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs"
+                                  className="bg-white/60 text-gray-700 px-2 py-0.5 rounded-full text-xs"
                                 >
                                   {tag}
                                 </span>
@@ -171,8 +173,8 @@ export default function Dashboard() {
           </div>
 
           {modalResource && (
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4">
-              <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative animate-fade-in">
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl max-w-md w-full p-8 relative border border-gray-100">
                 <button
                   onClick={() => setModalResource(null)}
                   className="absolute top-4 right-4 text-gray-400 hover:text-gray-700"
@@ -187,12 +189,15 @@ export default function Dashboard() {
                 <h2 className="text-xl font-bold mb-2 text-gray-800">{modalResource.title}</h2>
                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">{modalResource.description}</p>
                 {isTrialExpired ? (
-                  <p className="text-sm text-red-500">Din gratis prøveperiode er udløbet. <a href="/opgrader" className="underline">Opgrader for adgang</a>.</p>
+                  <p className="text-sm text-red-500">
+                    Din gratis prøveperiode er udløbet.{" "}
+                    <a href="/opgrader" className="underline">Opgrader for adgang</a>.
+                  </p>
                 ) : (
                   <a
                     href={modalResource.link}
                     target="_blank"
-                    className="inline-block bg-gray-900 text-white px-5 py-2 rounded-xl font-medium hover:bg-gray-800 transition"
+                    className="inline-block bg-purple-700 text-white px-5 py-2 rounded-xl font-medium hover:bg-purple-800 transition"
                   >
                     Download PDF
                   </a>

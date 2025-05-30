@@ -3,12 +3,20 @@
 import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2, ClipboardCheck, Clipboard } from "lucide-react";
+import {
+  Loader2,
+  ClipboardCheck,
+  Clipboard,
+  Download,
+  ThumbsUp,
+  ThumbsDown,
+} from "lucide-react";
 
 const MAX_FREE_REQUESTS = 3;
 
 export default function SeoOptimizer() {
   const [input, setInput] = useState("");
+  const [tone, setTone] = useState("Professionel");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -64,12 +72,10 @@ export default function SeoOptimizer() {
       const res = await fetch("/api/generate-seo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({ prompt: input, tone }),
       });
 
-      if (!res.ok) {
-        throw new Error("Der opstod en fejl under genereringen. Prøv igen.");
-      }
+      if (!res.ok) throw new Error("Der opstod en fejl under genereringen.");
 
       const data = await res.json();
       setOutput(data.result);
@@ -93,53 +99,114 @@ export default function SeoOptimizer() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleDownload = () => {
+    const file = new Blob([output], { type: "text/plain" });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "seo-optimering.txt";
+    link.click();
+  };
+
+  const examplePrompts = [
+    "En hjemmeside der sælger bæredygtige kontorartikler",
+    "Et online kursus for solo-selvstændige om AI-marketing",
+    "En ny webshop med fokus på dansk design",
+  ];
+
   return (
-    <main className="max-w-4xl mx-auto px-6 py-16">
-      <h1 className="text-3xl font-bold mb-6">SEO-Optimering</h1>
-      <p className="text-sm text-gray-600 mb-6">
-        Skriv hvad din side handler om, og få forslag til sidetitel, metabeskrivelse og nøgleord.
-      </p>
-
-      <Textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Skriv fx: En hjemmeside der sælger bæredygtige kontorartikler til virksomheder..."
-        rows={5}
-        className="mb-4"
-      />
-
-      <Button
-        onClick={handleGenerate}
-        disabled={loading || !input || (!isPro && usageLeft <= 0)}
-      >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-        Generér SEO-tekst
-      </Button>
-
-      {!isPro && (
-        <p className="text-sm text-gray-500 mt-2">
-          Du har {usageLeft} gratis generering{usageLeft !== 1 && "er"} tilbage i denne måned.
+    <main className="bg-gradient-to-br from-purple-50 to-emerald-50 min-h-screen py-20 px-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-md p-10">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900">SEO-Optimering</h1>
+        <p className="text-sm text-gray-600 mb-6">
+          Skriv hvad din side handler om, og få forslag til sidetitel, metabeskrivelse og nøgleord.
         </p>
-      )}
 
-      {error && (
-        <div className="mt-6 text-red-600 bg-red-50 border border-red-200 rounded p-4 text-sm">
-          {error}
-        </div>
-      )}
-
-      {output && (
-        <div className="mt-10 bg-gray-50 p-6 rounded-xl border text-sm relative">
-          <pre className="whitespace-pre-line">{output}</pre>
-          <button
-            onClick={handleCopy}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            aria-label="Kopiér"
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tone of voice</label>
+          <select
+            className="border border-gray-300 rounded-xl px-4 py-2 text-sm w-full sm:w-60"
+            value={tone}
+            onChange={(e) => setTone(e.target.value)}
           >
-            {copied ? <ClipboardCheck className="w-4 h-4" /> : <Clipboard className="w-4 h-4" />}
-          </button>
+            <option>Professionel</option>
+            <option>Kreativ</option>
+            <option>Formel</option>
+            <option>Informativ</option>
+          </select>
         </div>
-      )}
+
+        <Textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Skriv fx: En hjemmeside der sælger bæredygtige kontorartikler til virksomheder..."
+          rows={5}
+          className="mb-4"
+        />
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          {examplePrompts.map((ex, i) => (
+            <button
+              key={i}
+              onClick={() => setInput(ex)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full"
+            >
+              {ex}
+            </button>
+          ))}
+        </div>
+
+        <Button
+          onClick={handleGenerate}
+          disabled={loading || !input || (!isPro && usageLeft <= 0)}
+          className="mb-4"
+        >
+          {loading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+          Generér SEO-tekst
+        </Button>
+
+        {!isPro && (
+          <div className="text-sm text-gray-500 mb-6">
+            Du har <span className="font-semibold">{usageLeft}</span> gratis generering{usageLeft !== 1 && "er"} tilbage i denne måned.
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-100 border border-red-300 text-red-700 rounded-xl p-4 text-sm mb-6">
+            {error}
+          </div>
+        )}
+
+        {output && (
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 text-sm relative">
+            <pre className="whitespace-pre-line text-gray-800">{output}</pre>
+            <div className="flex gap-2 mt-4">
+              <Button variant="outline" onClick={handleCopy}>
+                {copied ? <ClipboardCheck className="w-4 h-4 mr-2" /> : <Clipboard className="w-4 h-4 mr-2" />}
+                Kopiér
+              </Button>
+              <Button variant="outline" onClick={handleDownload}>
+                <Download className="w-4 h-4 mr-2" />
+                Gem som txt
+              </Button>
+              <Button variant="ghost">
+                <ThumbsUp className="w-4 h-4 mr-1 text-green-600" />
+              </Button>
+              <Button variant="ghost">
+                <ThumbsDown className="w-4 h-4 text-red-500" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isPro && (
+          <div className="text-center mt-10 text-sm text-gray-500">
+            <span className="bg-yellow-50 text-yellow-700 px-4 py-2 rounded-xl inline-block border border-yellow-300">
+              Opgrader til Pro for ubegrænset adgang
+            </span>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
