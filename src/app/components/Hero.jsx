@@ -21,7 +21,7 @@ export default function Hero() {
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <a
-            href="#newsletter"
+            href="/pricing"
             className="bg-black text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-800 transition"
           >
             Prøv gratis

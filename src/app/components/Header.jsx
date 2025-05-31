@@ -24,8 +24,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-extrabold tracking-tight text-gray-900">
-          InsightCraft
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/images/ic-logo.png" alt="InsightCraft logo" className="h-8 w-auto" />
+          <span className="text-xl font-extrabold tracking-tight text-gray-900">InsightCraft</span>
         </Link>
 
         {/* Desktop nav */}

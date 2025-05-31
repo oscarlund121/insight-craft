@@ -67,7 +67,7 @@ export default function Pricing() {
         </ul>
 
         <Link
-          href="/dashboard"
+          href="/pricing"
           className="block w-full text-center bg-gray-900 text-white font-semibold py-3 rounded-xl hover:bg-black transition"
         >
           Start gratis prøve

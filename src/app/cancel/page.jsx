@@ -1,10 +1,24 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function CancelPage() {
+  const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in?redirect_url=/cancel');
+    }
+  }, [isLoaded, isSignedIn]);
+
+  if (!isSignedIn) return null;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center px-6 py-20">
       <motion.div
