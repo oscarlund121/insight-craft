@@ -66,7 +66,7 @@ export default function Header() {
             <SignInButton mode="modal" afterSignInUrl="/dashboard">
               <button className="text-sm hover:text-black">Log ind</button>
             </SignInButton>
-            <SignInButton mode="modal" afterSignInUrl="/dashboard">
+            <SignInButton mode="modal" afterSignInUrl="/pricing">
               <button className="ml-2 text-sm bg-black text-white px-4 py-2 rounded hover:bg-gray-900 transition shadow">
                 Start gratis
               </button>
