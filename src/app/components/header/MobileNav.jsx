@@ -1,46 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { SignedOut, SignUpButton } from "@clerk/nextjs";
+import { ChevronDown } from "lucide-react";
+import { useState, useRef } from "react";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
-export default function MobileNav({ isOpen, onClose }) {
-  if (!isOpen) return null;
+export default function DesktopNav() {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const timeoutRef = useRef(null);
 
-  const handleClick = () => {
-    if (onClose) onClose();
+  const handleMouseEnter = () => {
+    clearTimeout(timeoutRef.current);
+    setShowDropdown(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setShowDropdown(false);
+    }, 200);
   };
 
   return (
-    <div className="md:hidden px-6 pb-4 space-y-2 text-sm text-gray-800">
-      <Link href="/platform" className="block py-2" onClick={handleClick}>Platform</Link>
+    <nav className="hidden md:flex items-center gap-6 text-sm text-gray-800 relative">
+      <Link href="/dashboard" className="hover:text-black transition">Platform</Link>
 
-      <details className="block">
-        <summary className="py-2 cursor-pointer">Værktøjer</summary>
-        <div className="pl-4 space-y-1">
-          <Link href="/tools/newsletter-generator" className="block py-1" onClick={handleClick}>Nyhedsbrev Generator</Link>
-          <Link href="/tools/seo-optimizer" className="block py-1" onClick={handleClick}>SEO-Optimering</Link>
-          <Link href="/tools/social-media-helper" className="block py-1" onClick={handleClick}>SoMe Indhold</Link>
-          <Link href="/tools" className="block py-1" onClick={handleClick}>Se alle værktøjer</Link>
-        </div>
-      </details>
+      <div
+        className="relative"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Link href="/tools" className="flex items-center gap-1 hover:text-black transition">
+          Værktøjer <ChevronDown className="w-4 h-4" />
+        </Link>
 
-      <Link href="/pricing" className="block py-2" onClick={handleClick}>Priser</Link>
+        {showDropdown && (
+          <div className="absolute left-0 mt-2 w-64 bg-white/95 backdrop-blur border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
+            <Link href="/tools" className="block px-4 py-3 text-sm hover:bg-gray-50 transition font-medium">Se alle værktøjer</Link>
+            <Link href="/tools/newsletter-generator" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">Nyhedsbrev Generator</Link>
+            <Link href="/tools/seo-optimizer" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">SEO-Optimering</Link>
+            <Link href="/tools/social-media-helper" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">SoMe Indhold</Link>
+          </div>
+        )}
+      </div>
 
-      <SignedOut>
-        <SignUpButton mode="modal" afterSignUpUrl="/dashboard">
-          {({ open }) => (
-            <button
-              onClick={() => {
-                open();
-                handleClick();
-              }}
-              className="w-full mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-900 transition"
-            >
-              Start gratis
-            </button>
-          )}
-        </SignUpButton>
-      </SignedOut>
-    </div>
+      <Link href="/pricing" className="hover:text-black transition">Priser</Link>
+      <Link href="/profile" className="hover:text-black transition">Profil</Link>
+
+      <SignedIn>
+        <UserButton afterSignOutUrl="/" />
+      </SignedIn>
+    </nav>
   );
 }

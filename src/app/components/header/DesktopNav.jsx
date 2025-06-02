@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { useState, useRef } from "react";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 export default function DesktopNav() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -43,6 +44,11 @@ export default function DesktopNav() {
       </div>
 
       <Link href="/pricing" className="hover:text-black transition">Priser</Link>
+      <Link href="/profile" className="hover:text-black transition">Profil</Link>
+
+      <SignedIn>
+        <UserButton afterSignOutUrl="/" />
+      </SignedIn>
     </nav>
   );
 }
