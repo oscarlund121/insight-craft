@@ -1,54 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
-import { useState, useRef } from "react";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedOut, SignedIn, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
-export default function DesktopNav() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const timeoutRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    clearTimeout(timeoutRef.current);
-    setShowDropdown(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setShowDropdown(false);
-    }, 200);
+export default function MobileNav({ isOpen, onClose }) {
+  const handleClick = () => {
+    if (onClose) onClose();
   };
 
   return (
-    <nav className="hidden md:flex items-center gap-6 text-sm text-gray-800 relative">
-      <Link href="/dashboard" className="hover:text-black transition">Platform</Link>
+    <div className={`md:hidden px-6 pb-4 space-y-2 text-sm text-gray-800 ${isOpen ? "block" : "hidden"}`}>
+      <Link href="/platform" className="block py-2" onClick={handleClick}>Platform</Link>
 
-      <div
-        className="relative"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <Link href="/tools" className="flex items-center gap-1 hover:text-black transition">
-          Værktøjer <ChevronDown className="w-4 h-4" />
-        </Link>
+      <details className="block">
+        <summary className="py-2 cursor-pointer">Værktøjer</summary>
+        <div className="pl-4 space-y-1">
+          <Link href="/tools" className="block py-1" onClick={handleClick}>Se alle værktøjer</Link>
+          <Link href="/tools/newsletter-generator" className="block py-1" onClick={handleClick}>Nyhedsbrev Generator</Link>
+          <Link href="/tools/seo-optimizer" className="block py-1" onClick={handleClick}>SEO-Optimering</Link>
+          <Link href="/tools/social-media-helper" className="block py-1" onClick={handleClick}>SoMe Indhold</Link>
+        </div>
+      </details>
 
-        {showDropdown && (
-          <div className="absolute left-0 mt-2 w-64 bg-white/95 backdrop-blur border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
-            <Link href="/tools" className="block px-4 py-3 text-sm hover:bg-gray-50 transition font-medium">Se alle værktøjer</Link>
-            <Link href="/tools/newsletter-generator" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">Nyhedsbrev Generator</Link>
-            <Link href="/tools/seo-optimizer" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">SEO-Optimering</Link>
-            <Link href="/tools/social-media-helper" className="block px-4 py-3 text-sm hover:bg-gray-50 transition">SoMe Indhold</Link>
-          </div>
-        )}
-      </div>
+      <Link href="/pricing" className="block py-2" onClick={handleClick}>Priser</Link>
+      <Link href="/profile" className="block py-2" onClick={handleClick}>Profil</Link>
 
-      <Link href="/pricing" className="hover:text-black transition">Priser</Link>
-      <Link href="/profile" className="hover:text-black transition">Profil</Link>
+      <SignedOut>
+        <SignUpButton mode="modal" afterSignUpUrl="/dashboard" asChild>
+          <Button onClick={handleClick} className="w-full mt-2">
+            Start gratis
+          </Button>
+        </SignUpButton>
+      </SignedOut>
 
       <SignedIn>
-        <UserButton afterSignOutUrl="/" />
+        <div className="mt-4">
+          <UserButton afterSignOutUrl="/" />
+        </div>
       </SignedIn>
-    </nav>
+    </div>
   );
 }
