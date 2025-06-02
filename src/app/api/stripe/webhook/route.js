@@ -1,44 +1,42 @@
-import { auth } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
+import { Webhook } from "svix";
 import Stripe from "stripe";
+import { clerkClient } from "@clerk/nextjs/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
 });
 
 export async function POST(req) {
-  const { userId } = auth();
+  const body = await req.text();
+  const sig = headers().get("stripe-signature");
 
-  if (!userId) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+  let event;
 
   try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      line_items: [
-        {
-          price: "price_1RT7hHGgptWSRgXWFSL3U1fy", // Real Stripe Price ID
-          quantity: 1,
-        },
-      ],
-      subscription_data: {
-        trial_period_days: 7,
-        metadata: {
-          clerk_user_id: userId,
-        },
-      },
-      success_url: "https://insightcraft.dk/success",
-      cancel_url: "https://insightcraft.dk/cancel",
-      metadata: {
-        clerk_user_id: userId,
-      },
-    });
-
-    return new Response(JSON.stringify({ url: session.url }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Stripe checkout error:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    const clerkUserId = session.metadata?.clerk_user_id;
+    const customerId = session.customer;
+
+    if (clerkUserId && customerId) {
+      await clerkClient.users.updateUserMetadata(clerkUserId, {
+        publicMetadata: {
+          stripeCustomerId: customerId,
+        },
+      });
+    }
+  }
+
+  return new Response("OK", { status: 200 });
 }

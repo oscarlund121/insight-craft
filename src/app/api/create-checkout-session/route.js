@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 export async function POST(req) {
-  const { userId } = getAuth(req); // Korrekt kontekst!
+  const { userId } = await getAuth(req); // <- await her!
 
   if (!userId) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -20,7 +20,7 @@ export async function POST(req) {
       mode: "subscription",
       line_items: [
         {
-          price: "price_1RT7hHGgptWSRgXWFSL3U1fy",
+          price: "price_1RT7hHGgptWSRgXWFSL3U1fy", // din rigtige Stripe-pris-ID
           quantity: 1,
         },
       ],
@@ -33,6 +33,10 @@ export async function POST(req) {
       success_url: "https://insightcraft.dk/success",
       cancel_url: "https://insightcraft.dk/cancel",
     });
+
+    if (!session?.url) {
+      throw new Error("Stripe session URL mangler");
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { "Content-Type": "application/json" },

@@ -1,30 +1,25 @@
-// src/app/api/generate-seo/route.js
 import { OpenAI } from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req) {
   try {
-    const { prompt } = await req.json();
+    const { prompt, tone, profile } = await req.json();
 
-    if (!prompt) {
-      return new Response(
-        JSON.stringify({ error: "Prompt mangler." }),
-        { status: 400 }
-      );
-    }
+    const profileInfo = profile
+      ? `Virksomhed: ${profile.company}. Type: ${profile.type}. Speciale: ${profile.specialty}. Ønsker: ${profile.goal}.`
+      : "";
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: `Du er en erfaren SEO-specialist. Brug brugerens beskrivelse til at generere:
+          content: `Du er en erfaren SEO-specialist. Brug brugerens beskrivelse og virksomhedsinfo hvis tilgængeligt. Generér:
 1. En engagerende sidetitel (max 60 tegn)
 2. En optimeret metabeskrivelse (max 155 tegn)
 3. 5 relevante SEO-nøgleord (kommasepareret)
+
 Svar i dette format:
 - Titel: ...
 - Meta: ...
@@ -32,20 +27,15 @@ Svar i dette format:
         },
         {
           role: "user",
-          content: prompt,
+          content: `${profileInfo}\nTone: ${tone}\n\n${prompt}`,
         },
       ],
       temperature: 0.7,
     });
 
-    const result = response.choices[0].message.content;
-
-    return new Response(JSON.stringify({ result }), { status: 200 });
+    return new Response(JSON.stringify({ result: response.choices[0].message.content }), { status: 200 });
   } catch (error) {
-    console.error("SEO API ERROR:", error);
-    return new Response(
-      JSON.stringify({ error: "Noget gik galt. Prøv igen senere." }),
-      { status: 500 }
-    );
+    console.error("SEO API error:", error);
+    return new Response(JSON.stringify({ error: "Noget gik galt." }), { status: 500 });
   }
 }

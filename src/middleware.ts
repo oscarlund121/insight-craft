@@ -1,23 +1,36 @@
 // src/middleware.ts
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+/* import { NextResponse } from "next/server"; */
+/* import { checkUserHasSubscription } from "@/lib/subscriptions"; */
 
-// Åbne (offentlige) ruter
+// Offentlige ruter
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/pricing",
   "/website",
   "/kontakt",
   "/om",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/api/create-checkout-session",
+    "/account",           // ← tilføj adgang til konto-side
+  "/tools(.*)", 
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect();
-  }
+  if (isPublicRoute(req)) return;
+
+  await auth.protect();
+
+  /* const hasSubscription = await checkUserHasSubscription();
+  const isDashboardRoute = req.nextUrl.pathname.startsWith("/tools");
+
+  if (!hasSubscription && isDashboardRoute) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/pricing";
+    return NextResponse.redirect(url);
+  } */
 });
-
-
 
 export const config = {
   matcher: [

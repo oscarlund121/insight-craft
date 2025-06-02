@@ -12,6 +12,7 @@ import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import HowItWorks from "./components/HowItWorks";
 
 
+
 export default function Home() {
   return (
     <>
@@ -28,6 +29,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         <script defer data-domain="insightcraft.dk" src="https://plausible.io/js/script.js"></script>
       </Head>
+     {/*  <HeroSection /> */}
       <Hero />
       <About />
       <Audience />

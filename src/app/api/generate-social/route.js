@@ -1,49 +1,42 @@
 import { OpenAI } from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req) {
   try {
-    const { prompt } = await req.json();
+    const { prompt, tone, profile } = await req.json();
+
+    const profileInfo = profile
+      ? `Virksomhed: ${profile.company}. Type: ${profile.type}. Speciale: ${profile.specialty}. Ønsker: ${profile.goal}.`
+      : "";
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-     content: `Du er en ekspert i sociale medier og indholdsstrategi. Baseret på brugerens input, skal du generere:
-- Et opslag til LinkedIn
-- Et opslag til Instagram (inkl. emojis)
-- Et opslag til Facebook
+          content: `Du er en ekspert i sociale medier og indholdsstrategi. Baseret på brugerens input og evt. virksomhedsinfo, generér indhold til tre platforme:
 
-Svar altid på dansk, medmindre brugeren beder om et andet sprog.
-
-Svar i dette format:
 LinkedIn:
 ...
 Instagram:
 ...
 Facebook:
-...`,
+...
+
+Svar altid på dansk, medmindre brugeren beder om andet.`,
         },
         {
           role: "user",
-          content: prompt,
+          content: `${profileInfo}\nTone: ${tone}\n\n${prompt}`,
         },
       ],
       temperature: 0.7,
     });
 
-    const result = response.choices[0].message.content;
-
-    return Response.json({ result });
+    return Response.json({ result: response.choices[0].message.content });
   } catch (error) {
-    console.error("SoMe API ERROR:", error);
-    return new Response(
-      JSON.stringify({ error: "Noget gik galt. Prøv igen senere." }),
-      { status: 500 }
-    );
+    console.error("SoMe API error:", error);
+    return Response.json({ error: "Noget gik galt." }, { status: 500 });
   }
 }
