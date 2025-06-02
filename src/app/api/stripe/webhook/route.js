@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { Webhook } from "svix";
+/* import { Webhook } from "svix"; */
 import Stripe from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
 
