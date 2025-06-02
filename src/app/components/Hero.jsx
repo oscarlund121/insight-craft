@@ -13,10 +13,10 @@ export default function Hero() {
         className="max-w-3xl"
       >
         <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-          Skab mere hurtigere.
+          pompus ai marketing
         </h1>
         <p className="text-lg md:text-xl text-gray-700 mb-8">
-          InsightCraft hjælper dig med at generere marketingindhold med AI – hurtigt, klart og konverterende.
+          pompus ai er værktøj som er skabt til hjælpe dig med at generere marketingindhold med AI – hurtigt, klart og kompetent.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
