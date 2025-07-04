@@ -13,7 +13,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/create-checkout-session",
-    "/account",           // ← tilføj adgang til konto-side
+    "/account",          
   "/tools(.*)", 
 ]);
 
