@@ -369,7 +369,7 @@ export default function NewsletterForm() {
                       </div>
                       <div className="flex-1">
                         <div className="text-sm font-semibold text-gray-900">{type.label}</div>
-                        <div className="text-xs text-gray-600 mt-1">{type.description}</div>
+                        <div className="text-xs text-gray-600 mt-1 hidden sm:block">{type.description}</div>
                       </div>
                     </label>
                   ))}
@@ -407,7 +407,7 @@ export default function NewsletterForm() {
                         </div>
                         <div className="flex-1">
                           <div className="text-xs font-medium text-gray-900">{option.value}</div>
-                          <div className="text-xs text-gray-600 mt-1">{option.description}</div>
+                          <div className="text-xs text-gray-600 mt-1 hidden sm:block">{option.description}</div>
                         </div>
                       </label>
                     ))}
@@ -443,7 +443,7 @@ export default function NewsletterForm() {
                         </div>
                         <div className="flex-1">
                           <div className="text-xs font-medium text-gray-900">{structure.label}</div>
-                          <div className="text-xs text-gray-600 mt-1">{structure.description}</div>
+                          <div className="text-xs text-gray-600 mt-1 hidden sm:block">{structure.description}</div>
                         </div>
                       </label>
                     ))}

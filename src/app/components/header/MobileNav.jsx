@@ -12,6 +12,12 @@ export default function MobileNav({ isOpen, onClose }) {
 
   const tools = [
     {
+      icon: Zap,
+      title: "Se alle værktøjer",
+      href: "/tools",
+      isMain: true
+    },
+    {
       icon: Mail,
       title: "Nyhedsbrev Generator",
       href: "/tools/newsletter-generator"
@@ -25,11 +31,6 @@ export default function MobileNav({ isOpen, onClose }) {
       icon: Share2,
       title: "SoMe Indhold",
       href: "/tools/social-media-helper"
-    },
-    {
-      icon: Zap,
-      title: "Se alle værktøjer",
-      href: "/tools"
     }
   ];
 
@@ -48,18 +49,39 @@ export default function MobileNav({ isOpen, onClose }) {
           <summary className="py-3 cursor-pointer text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium px-3 rounded-lg hover:bg-gray-50/50">
             Værktøjer
           </summary>
-          <div className="pl-4 space-y-1 mt-2">
-            {tools.map((tool, index) => {
+          <div className="mt-2 border-t border-gray-100 pt-2">
+            {/* Hovedlink øverst */}
+            {tools.filter(tool => tool.isMain).map((tool, index) => {
               const IconComponent = tool.icon;
               return (
                 <Link 
                   key={index}
                   href={tool.href} 
-                  className="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 rounded-lg hover:bg-gray-50/50" 
+                  className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-gray-900 transition-colors duration-200 px-3 rounded-lg hover:bg-gray-50/50 border-b border-gray-100 mb-2 pb-3" 
                   onClick={handleClick}
                 >
-                  <IconComponent className="w-4 h-4 text-purple-600" />
-                  {tool.title}
+                  <div className="flex items-center justify-center w-6 h-6 bg-purple-600 rounded-lg">
+                    <IconComponent className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="font-medium">{tool.title}</span>
+                </Link>
+              );
+            })}
+            
+            {/* Individuelle værktøjer */}
+            {tools.filter(tool => !tool.isMain).map((tool, index) => {
+              const IconComponent = tool.icon;
+              return (
+                <Link 
+                  key={index}
+                  href={tool.href} 
+                  className="flex items-center gap-3 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 px-3 rounded-lg hover:bg-gray-50/50 text-sm" 
+                  onClick={handleClick}
+                >
+                  <div className="flex items-center justify-center w-5 h-5 bg-gray-100 rounded-md">
+                    <IconComponent className="w-3 h-3 text-purple-600" />
+                  </div>
+                  <span>{tool.title}</span>
                 </Link>
               );
             })}

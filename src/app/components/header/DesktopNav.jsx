@@ -23,28 +23,29 @@ export default function DesktopNav() {
 
   const tools = [
     {
+      icon: Zap,
+      title: "Se alle værktøjer",
+      description: "Udforsk vores komplette værktøjskasse",
+      href: "/tools",
+      isMain: true
+    },
+    {
       icon: Mail,
       title: "Nyhedsbrev Generator",
-      description: "Opret engagerende nyhedsbreve med AI-assistance",
+      description: "Opret engagerende nyhedsbreve",
       href: "/tools/newsletter-generator"
     },
     {
       icon: Target,
       title: "SEO-Optimering",
-      description: "Optimer dit indhold til søgemaskiner",
+      description: "Optimer til søgemaskiner",
       href: "/tools/seo-optimizer"
     },
     {
       icon: Share2,
       title: "SoMe Indhold",
-      description: "Generer indhold til sociale medier",
+      description: "Generer sociale medier indhold",
       href: "/tools/social-media-helper"
-    },
-    {
-      icon: Zap,
-      title: "Se alle værktøjer",
-      description: "Udforsk vores komplette værktøjskasse",
-      href: "/tools"
     }
   ];
 
@@ -63,19 +64,46 @@ export default function DesktopNav() {
         </Link>
 
         {showDropdown && (
-          <div className="absolute top-full left-0 mt-2 w-96 bg-white rounded-2xl shadow-xl border border-gray-200/50 backdrop-blur-lg overflow-hidden transition-all duration-200 transform opacity-100 scale-100">
-            <div className="grid grid-cols-2 gap-0">
-              {tools.map((tool, index) => {
+          <div className="absolute top-full left-0 mt-2 w-72 bg-white/95 rounded-xl shadow-lg border border-gray-200/50 backdrop-blur-lg overflow-hidden transition-all duration-200 transform opacity-100 scale-100">
+            {/* Hovedlink øverst */}
+            <div className="border-b border-gray-100">
+              {tools.filter(tool => tool.isMain).map((tool, index) => {
                 const IconComponent = tool.icon;
                 return (
                   <Link
                     key={index}
                     href={tool.href}
-                    className="p-4 hover:bg-gray-50/50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 block"
+                    className="flex items-center p-4 hover:bg-gray-50 transition-colors duration-200"
                   >
-                    <IconComponent className="w-8 h-8 mb-3 text-purple-600" />
-                    <div className="font-semibold text-gray-900 mb-1">{tool.title}</div>
-                    <div className="text-sm text-gray-600 leading-relaxed">{tool.description}</div>
+                    <div className="flex items-center justify-center w-8 h-8 bg-purple-600 rounded-lg mr-3">
+                      <IconComponent className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900 text-sm">{tool.title}</div>
+                      <div className="text-xs text-gray-600 mt-0.5">{tool.description}</div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            
+            {/* Individuelle værktøjer */}
+            <div className="py-1">
+              {tools.filter(tool => !tool.isMain).map((tool, index) => {
+                const IconComponent = tool.icon;
+                return (
+                  <Link
+                    key={index}
+                    href={tool.href}
+                    className="flex items-center px-4 py-2.5 hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    <div className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-md mr-3">
+                      <IconComponent className="w-3 h-3 text-purple-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900 text-xs">{tool.title}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{tool.description}</div>
+                    </div>
                   </Link>
                 );
               })}
