@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 
 
 
@@ -12,6 +12,7 @@ export async function POST(req) {
       });
     }
 
+    const supabase = getSupabaseClient();
     const body = await req.json();
     const { type, prompt, result } = body;
 
