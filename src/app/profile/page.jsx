@@ -6,7 +6,7 @@ import ProfileForm from "../components/profile/ProfileForm";
 export default function ProfilPage() {
   return (
     <main>
-      <ProfileHeader />
+
       <ProfileForm />
     </main>
   );
